@@ -3,17 +3,19 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <title>Vipps Simulator (1:1 m/ flyt)</title>
+    <title>Vipps Simulator (PIKSELPERFEKT)</title>
     <style>
         /* CSS Variabler og global styling */
         :root {
             --vipps-orange: #FF6633;
             --vipps-purple: #7A3D97;
-            --vipps-dark-bg: #000000;
-            --vipps-card-bg: #1C1C1E;
+            /* Justert mørk bakgrunn - Dyp mørkegrå som i bildet */
+            --vipps-dark-bg: #121212; 
+            --vipps-card-bg: #2C2C2E; /* Lett lysere grå for kortet */
             --vipps-text-light: #F0F0F0;
             --vipps-text-gray: #A0A0A0;
-            --vipps-fee-bg: #55271A; 
+            /* Justert farge for gebyr-boksen - Mer rustrød/brun */
+            --vipps-fee-bg: #803D2E; 
             --nordea-red: #CC0033;
             
             /* LYS MODUS farger for kvittering */
@@ -45,11 +47,11 @@
             display: flex;
             flex-direction: column;
             position: relative;
-            background-color: var(--vipps-dark-bg); /* Sikrer mørk bakgrunn i starten */
+            background-color: var(--vipps-dark-bg);
             transition: background-color 0.3s;
         }
 
-        /* --- SKJERM 1: Os Håndball (FØR Betaling) --- */
+        /* --- SKJERM 1: Os Håndball (Mørk modus - FØR Betaling) --- */
 
         .start-screen {
             flex-grow: 1;
@@ -142,7 +144,7 @@
         }
 
         .bank-details {
-            background-color: var(--vipps-card-bg); 
+            background-color: var(--vipps-card-bg); /* Bruker den litt lysere gråfargen */
             padding: 15px;
             border-radius: 10px;
             width: 100%;
@@ -243,7 +245,7 @@
             color: var(--text-dark);
             z-index: 30;
             opacity: 0;
-            visibility: hidden; /* Skjul fullstendig når inaktiv */
+            visibility: hidden;
             transition: opacity 0.3s, visibility 0.3s;
         }
 
@@ -259,7 +261,7 @@
             left: 0;
             width: 100%;
             height: 100%;
-            /* Base64 for konfetti mønster. Fargene er hentet direkte fra bildet. */
+            /* Base64 for konfetti mønster. */
             background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="150" height="150" viewBox="0 0 150 150"><path fill="%23FFD138" d="M10 5 L20 15 L10 25 Z"/><path fill="%23CC5BFF" d="M120 125 L130 135 L120 145 Z"/><path fill="%23FF6633" d="M40 80 L50 90 L40 100 Z"/><path fill="%23CC5BFF" d="M70 10 L80 20 L70 30 Z"/><path fill="%23FFD138" d="M100 60 L110 70 L100 80 Z"/><rect x="50" y="50" width="50" height="50" fill="url(%23pattern)" opacity="0.8"/><defs><pattern id="pattern" patternUnits="userSpaceOnUse" width="100" height="100"><g opacity="0.8"><path d="M50 50 C 40 40, 60 40, 50 50 L 50 70 C 60 70, 40 70, 50 50 Z" fill="%23CC5BFF"/></g></pattern></defs></svg>');
             background-size: 150px 150px;
             opacity: 0.9;
@@ -268,7 +270,8 @@
 
         .vipps-card-receipt {
             background-color: var(--light-card);
-            border-radius: 20px;
+            /* Justert border-radius for å matche bildet nøyaktig (ca. 16-20px) */
+            border-radius: 20px; 
             padding: 50px 30px;
             box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
             text-align: center;
@@ -412,6 +415,11 @@
             appContainer.style.backgroundColor = 'var(--light-bg)';
             document.body.style.backgroundColor = 'var(--light-bg)';
         });
+
+        // Funksjon for tilbake-pilen (laster siden på nytt)
+        function goBack() {
+            location.reload();
+        }
 
     </script>
 </body>
