@@ -3,12 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <title>Vipps Payment Simulator (KORRIGERT FLYT)</title>
+    <title>Vipps - Kort oppsummert</title>
     <style>
-        /* CSS Variabler for Vipps farger */
+        /* CSS Variabler og global styling for Vipps (Mørk modus) */
         :root {
             --vipps-orange: #FF6633;
-            --vipps-purple: #7A3D97;
             --dark-background: #000000;
             --dark-card: #1C1C1E;
             --text-light: #F0F0F0;
@@ -16,32 +15,31 @@
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
         }
 
-        /* Generelle mobil-vennlige innstillinger */
         body {
             margin: 0;
             padding: 0;
             display: flex;
             justify-content: center;
+            align-items: flex-start; /* Justerer innholdet mot toppen */
             min-height: 100vh;
-            color: var(--text-light); /* Standardfarge satt til lys for startskjermen */
-            background-color: var(--dark-background); /* Standard bakgrunn satt til mørk */
-            transition: background-color 0.3s;
+            background-color: var(--dark-background);
+            color: var(--text-light);
         }
 
         /* Hovedcontainer for å simulere mobil-visning */
         .app-container {
             width: 100%;
             max-width: 450px;
-            box-shadow: 0 0 20px rgba(0, 0, 0, 0.2);
-            position: relative;
             min-height: 100vh;
             display: flex;
             flex-direction: column;
+            padding: 0;
+            box-sizing: border-box;
         }
 
-        /* --- Start Screen: Os Håndball (Mørk modus - FØR Betaling) --- */
+        /* --- Innhold: Kort oppsummert --- */
 
-        .start-screen {
+        .screen-content {
             flex-grow: 1;
             display: flex;
             flex-direction: column;
@@ -49,7 +47,6 @@
             width: 100%;
             padding: 20px;
             box-sizing: border-box;
-            background-color: var(--dark-background);
         }
 
         .header {
@@ -62,7 +59,6 @@
 
         .header .back-arrow {
             font-size: 24px;
-            cursor: pointer;
             color: var(--text-light);
             padding-right: 20px;
         }
@@ -114,7 +110,7 @@
         }
 
         .fee-info {
-            background-color: #55271a; /* Mørk, rødbrun farge fra bildet */
+            background-color: #55271a; /* Mørk, rødbrun farge */
             padding: 15px;
             border-radius: 10px;
             font-size: 15px;
@@ -135,7 +131,6 @@
             justify-content: space-between;
             align-items: center;
             max-width: 350px;
-            cursor: pointer;
         }
 
         .bank-details .nordea-logo {
@@ -183,7 +178,6 @@
             padding: 20px 0;
             text-align: center;
             background-color: var(--dark-background); 
-            border-top: none;
             position: fixed;
             bottom: 0;
             max-width: 450px; 
@@ -202,91 +196,15 @@
             color: white;
             box-shadow: 0 4px 10px rgba(255, 102, 51, 0.4);
         }
-
-        /* --- Confirmation Screen: Nordic Kitchen (Lys modus - ETTER Betaling/Kvittering) --- */
-
-        .confirmation-screen {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            min-height: 100vh;
-            display: none; 
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            background-color: #f0f0f0; /* Lys bakgrunn for kvittering/varsel */
-            color: var(--dark-card);
-            z-index: 30;
-        }
-
-        .confirmation-screen.active {
-            display: flex; 
-        }
-        
-        /* Confetti Pattern Background Simulation (Gjenbrukt fra forrige versjon) */
-        .confetti-background {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100" viewBox="0 0 100 100"><text x="10" y="30" font-size="20" opacity="0.6">🎉</text><text x="60" y="80" font-size="20" opacity="0.6">🎊</text><text x="35" y="55" font-size="20" opacity="0.6">🥳</text></svg>');
-            background-size: 150px 150px;
-            opacity: 0.1;
-            z-index: 0;
-        }
-
-        .vipps-card-receipt {
-            background-color: white;
-            border-radius: 20px;
-            padding: 50px 30px;
-            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
-            text-align: center;
-            width: 80%;
-            max-width: 300px;
-            position: relative;
-            z-index: 10;
-        }
-
-        .vipps-card-receipt h1 {
-            font-size: 40px;
-            font-weight: 700;
-            margin: 15px 0;
-            color: var(--dark-card);
-        }
-
-        .vipps-card-receipt p {
-            margin: 5px 0;
-            font-size: 16px;
-            color: #5a5a5a;
-        }
-
-        .vipps-card-receipt .logo-details {
-            margin-bottom: 20px;
-        }
-
-        .vipps-card-receipt .company-info p {
-            color: var(--dark-card);
-            font-weight: 600;
-        }
-        
-        .vipps-card-receipt .logo-icon {
-            background-color: var(--vipps-purple);
-        }
-
-        .hidden {
-            display: none !important;
-        }
     </style>
 </head>
 <body>
 
     <div class="app-container">
         
-        <div class="start-screen" id="start-screen">
+        <div class="screen-content">
             <div class="header">
-                <span class="back-arrow" onclick="goBack()">&#x2190;</span> 
+                <span class="back-arrow">&#x2190;</span> 
                 <h2>Kort oppsummert</h2>
             </div>
             
@@ -315,56 +233,9 @@
             </div>
         </div>
         
-        <div class="btn-pay-fixed" id="pay-button-container">
-            <button class="btn-pay" id="pay-button-start">Betal</button>
-        </div>
-
-
-        <div class="confirmation-screen" id="confirmation-screen">
-            <div class="confetti-background"></div>
-
-            <div class="vipps-card-receipt">
-                <div class="logo-details">
-                    <div class="logo-icon">
-                        <img src="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='white'><path d='M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z'/></svg>" alt="Vipps logo placeholder">
-                    </div>
-                    <div class="company-info">
-                        <p>#986362 • **NORDIC KITCHEN AS**</p>
-                    </div>
-                </div>
-                <h1>100 000 kr</h1>
-                <p>Komplett kjøkken</p>
-            </div>
+        <div class="btn-pay-fixed">
+            <button class="btn-pay">Betal</button>
         </div>
     </div>
-
-    <script>
-        const appContainer = document.querySelector('.app-container');
-        const startScreen = document.getElementById('start-screen');
-        const payButtonStartContainer = document.getElementById('pay-button-container');
-        const payButtonStart = document.getElementById('pay-button-start');
-        const confirmationScreen = document.getElementById('confirmation-screen');
-
-        // Funksjon for å bytte skjerm til Kvittering/Varsel
-        payButtonStart.addEventListener('click', () => {
-            // 1. Skjul Første skjerm (Os Håndball)
-            startScreen.classList.add('hidden');
-            payButtonStartContainer.classList.add('hidden');
-            
-            // 2. Vis Kvitteringsskjermen (Nordic Kitchen)
-            confirmationScreen.classList.add('active');
-
-            // 3. Juster bakgrunnen til lys modus
-            appContainer.style.backgroundColor = '#f0f0f0';
-            document.body.style.backgroundColor = '#f0f0f0';
-        });
-
-        // Funksjon for å gå tilbake (brukt for pilen på Første skjerm)
-        function goBack() {
-             // For denne simulatoren betyr "gå tilbake" å laste siden på nytt
-             location.reload();
-        }
-
-    </script>
 </body>
 </html>
