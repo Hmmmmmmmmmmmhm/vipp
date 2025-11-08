@@ -2,63 +2,84 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Vipps Payment Simulator</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>Vipps Payment Simulator (Mobil)</title>
     <style>
-        /* Base styles for the "Start Screen" (Nordic Kitchen) */
-        body {
+        /* CSS Variabler for Vipps farger */
+        :root {
+            --vipps-orange: #FF6633;
+            --vipps-purple: #7A3D97;
+            --dark-background: #000000;
+            --dark-card: #1C1C1E;
+            --text-light: #F0F0F0;
+            --text-gray: #A0A0A0;
+            /* Fonten er satt til systemfont for å etterligne app-utseende */
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-            margin: 0;
-            padding: 0;
-            background-color: #f0f0f0; /* Light background for the confetti pattern */
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
-            overflow: hidden;
-            color: #1c1c1e;
         }
 
-        /* Confetti Pattern Background Simulation (Based on the first image) */
+        /* Generelle mobil-vennlige innstillinger */
+        body {
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            min-height: 100vh;
+            color: var(--dark-card);
+            background-color: #f0f0f0; /* Default lys bakgrunn */
+            transition: background-color 0.3s;
+        }
+
+        /* Hovedcontainer for å simulere mobil-visning */
+        .app-container {
+            width: 100%;
+            max-width: 450px; /* Typisk maks bredde for mobil */
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.2);
+            position: relative;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        /* --- Start Screen: Nordic Kitchen (Lys modus) --- */
+
+        .start-screen {
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            background-color: #ffffff; /* Hvit bakgrunn for kortet */
+        }
+        
+        /* Confetti pattern (forenklet) */
         .confetti-background {
-            position: fixed;
+            position: absolute;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100" viewBox="0 0 100 100"><text x="10" y="30" font-size="20" opacity="0.6">🎉</text><text x="60" y="80" font-size="20" opacity="0.6">🎊</text><text x="35" y="55" font-size="20" opacity="0.6">🥳</text></svg>'),
-                              /* Simplified party horn graphic placeholder */
-                              linear-gradient(45deg, #fceb9c 0%, #e8a947 50%, #d46f3a 100%);
-            background-size: 100px 100px;
-            opacity: 0.1; /* Keep it light like the image */
-        }
-
-        /* Container for the main content card */
-        .card-container {
-            position: relative;
-            z-index: 10;
-            width: 100%;
-            max-width: 350px;
-            padding: 20px;
-            box-sizing: border-box;
-            display: flex;
-            justify-content: center;
+            background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100" viewBox="0 0 100 100"><text x="10" y="30" font-size="20" opacity="0.6">🎉</text><text x="60" y="80" font-size="20" opacity="0.6">🎊</text><text x="35" y="55" font-size="20" opacity="0.6">🥳</text></svg>');
+            background-size: 150px 150px;
+            opacity: 0.1;
+            z-index: 0;
         }
 
         .vipps-card {
             background-color: white;
             border-radius: 20px;
-            padding: 40px 30px;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            padding: 50px 30px;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
             text-align: center;
-            width: 100%;
+            width: 80%;
+            max-width: 300px;
+            position: relative;
+            z-index: 10;
         }
 
         .vipps-card h1 {
-            font-size: 44px;
+            font-size: 40px;
             font-weight: 700;
             margin: 15px 0;
-            color: #1c1c1e;
         }
 
         .vipps-card p {
@@ -67,16 +88,15 @@
             color: #5a5a5a;
         }
 
-        .vipps-card .logo-details {
+        .logo-details {
             display: flex;
             align-items: center;
             justify-content: center;
             margin-bottom: 20px;
         }
 
-        .vipps-card .logo-icon {
-            background-color: #7A3D97; /* Vipps purple */
-            color: white;
+        .logo-icon {
+            background-color: var(--vipps-purple);
             width: 30px;
             height: 30px;
             border-radius: 8px;
@@ -84,87 +104,93 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 18px; /* Placeholder for logo */
+        }
+        
+        .logo-icon img {
+            width: 18px; 
+            height: 18px;
         }
 
-        .vipps-card .company-info {
+        .company-info {
             font-size: 14px;
             line-height: 1.2;
         }
         
-        .vipps-card .company-info strong {
-            font-weight: 600;
+        /* Fikser fonten for å se riktig ut som i bildet */
+        .company-info p {
             color: #1c1c1e;
-            display: block;
+            font-weight: 600;
         }
 
-        /* General button style (used for the confirmation screen) */
-        .btn-pay {
+        /* Betal-knapp for Start Screen (fast nederst) */
+        .btn-pay-fixed {
             width: 100%;
+            padding: 20px 0;
+            text-align: center;
+            background-color: #f0f0f0; /* Grå bakgrunn for knappen i Vipps */
+            border-top: 1px solid #e0e0e0;
+            position: fixed;
+            bottom: 0;
+            max-width: 450px; /* Match app-container */
+            z-index: 20;
+        }
+
+        .btn-pay {
+            width: 90%;
             padding: 16px;
             border: none;
             border-radius: 14px;
             font-size: 18px;
             font-weight: 600;
             cursor: pointer;
-            transition: background-color 0.2s;
-            position: fixed;
-            bottom: 30px;
-            left: 50%;
-            transform: translateX(-50%);
-            max-width: 350px; /* Match card width */
-            box-sizing: border-box;
-        }
-
-        /* Pay button specific style (used for confirmation screen) */
-        .btn-pay.orange {
-            background-color: #ff6633;
+            background-color: var(--vipps-orange);
             color: white;
             box-shadow: 0 4px 10px rgba(255, 102, 51, 0.4);
         }
 
-        /* --- Confirmation Screen Styles (Defaulted to hidden) --- */
+
+        /* --- Confirmation Screen: Os Håndball (Mørk modus) --- */
 
         .confirmation-screen {
-            background-color: black; /* Black background like the image */
-            color: white;
-            position: fixed;
+            background-color: var(--dark-background);
+            color: var(--text-light);
+            position: absolute;
             top: 0;
             left: 0;
             width: 100%;
-            height: 100%;
+            min-height: 100vh;
             padding: 20px;
             box-sizing: border-box;
-            display: none; /* Initially hidden */
+            display: none; 
             flex-direction: column;
             align-items: center;
             text-align: center;
+            z-index: 30;
         }
 
         .confirmation-screen.active {
-            display: flex; /* Show when active */
+            display: flex; 
         }
 
         .header {
             width: 100%;
             display: flex;
-            justify-content: space-between;
-            margin-bottom: 50px;
+            align-items: center;
+            padding: 10px 0;
+            margin-bottom: 30px;
         }
 
         .header .back-arrow {
             font-size: 24px;
             cursor: pointer;
-            color: white;
+            color: var(--text-light);
+            padding-right: 20px;
         }
 
         .header h2 {
             font-size: 18px;
             font-weight: 600;
             margin: 0;
-            text-align: center;
-            flex-grow: 1; /* Center the title */
-            margin-left: -24px; /* Counteract the back arrow width for centering */
         }
 
         .confirmation-content {
@@ -172,20 +198,20 @@
             display: flex;
             flex-direction: column;
             align-items: center;
-            max-width: 350px;
             width: 100%;
+            padding: 0 20px;
+            box-sizing: border-box;
         }
-
+        
         .os-logo {
             width: 80px;
             height: 80px;
             border-radius: 50%;
-            background-color: #ffffff; /* White background for the logo circle */
+            background-color: #ffffff; 
             display: flex;
             align-items: center;
             justify-content: center;
             margin-bottom: 20px;
-            box-shadow: 0 0 0 2px #fff; /* A slight white border effect */
         }
 
         /* Placeholder for Os Håndball logo */
@@ -203,7 +229,7 @@
 
         .company-details {
             font-size: 14px;
-            color: #a0a0a0;
+            color: var(--text-gray);
             margin-bottom: 40px;
         }
 
@@ -214,160 +240,178 @@
         }
 
         .fee-info {
-            background-color: #55271a; /* Dark orange/brown color from the image */
+            background-color: #2F1711; /* Mørk, rødbrun farge fra bildet */
             padding: 15px;
             border-radius: 10px;
             font-size: 15px;
             font-weight: 500;
             margin-bottom: 30px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
+            width: 100%;
+            line-height: 1.3;
         }
 
         .bank-details {
-            background-color: #1c1c1e; /* Darker gray/black */
+            background-color: var(--dark-card); /* Mørk grå/svart kort */
             padding: 15px;
             border-radius: 10px;
             width: 100%;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 120px; /* Space for the fixed button at the bottom */
+            margin-bottom: 120px; 
             cursor: pointer;
         }
 
         .bank-details .nordea-logo {
-            width: 60px;
-            height: 18px;
-            background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 30"><rect width="100" height="30" fill="#cc0033"/><text x="50" y="20" font-family="Arial" font-size="14" fill="white" text-anchor="middle">Nordea</text></svg>');
-            background-size: contain;
-            background-repeat: no-repeat;
+            width: 50px;
+            height: 20px;
+            /* Nordea logo farge som i bildet */
+            background-color: #cc0033; 
+            border-radius: 4px;
             margin-right: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 10px;
+            font-weight: bold;
         }
-        
+
         .bank-details .bank-info {
             text-align: left;
             flex-grow: 1;
-            font-size: 14px;
         }
 
         .bank-details .bank-number {
-            font-size: 18px;
+            font-size: 16px;
             font-weight: 600;
-            color: #f0f0f0;
+            color: var(--text-light);
         }
 
         .bank-details .bank-label {
             font-size: 10px;
-            color: #a0a0a0;
-            line-height: 1;
+            color: var(--text-gray);
+            line-height: 1.1;
             text-align: right;
+            margin-left: 10px;
         }
 
         .bank-details .bank-arrow {
             font-size: 20px;
-            color: #a0a0a0;
+            color: var(--text-gray);
             margin-left: 10px;
         }
         
-        /* Utility class to hide elements visually */
         .hidden {
-            display: none;
+            display: none !important;
         }
     </style>
 </head>
 <body>
 
-    <div class="confetti-background"></div>
+    <div class="app-container">
+        
+        <div class="start-screen" id="start-screen">
+            <div class="confetti-background"></div>
 
-    <div class="card-container" id="start-screen">
-        <div class="vipps-card">
-            <div class="logo-details">
-                <div class="logo-icon">
-                    <img src="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='white'><path d='M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z'/></svg>" alt="Vipps logo placeholder">
+            <div class="vipps-card">
+                <div class="logo-details">
+                    <div class="logo-icon">
+                        <img src="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='white'><path d='M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z'/></svg>" alt="Vipps logo placeholder">
+                    </div>
+                    <div class="company-info">
+                        <p>#986362 • **NORDIC KITCHEN AS**</p>
+                    </div>
                 </div>
-                <div class="company-info">
-                    <p>#986362 • **NORDIC KITCHEN AS**</p>
-                </div>
-            </div>
-            <h1>100 000 kr</h1>
-            <p>Komplett kjøkken</p>
-        </div>
-    </div>
-    
-    <button class="btn-pay orange" id="pay-button">Betal</button>
-
-
-    <div class="confirmation-screen" id="confirmation-screen">
-        <div class="confirmation-content">
-            <div class="header">
-                <span class="back-arrow" onclick="location.reload()">&#x2190;</span> <h2>Kort oppsummert</h2>
-            </div>
-            
-            <div class="os-logo">
-                <img src="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><circle cx='50' cy='50' r='45' fill='black'/><text x='50' y='30' font-size='20' font-weight='bold' fill='white' text-anchor='middle'>HÅNDBALL</text><path d='M50 40 L60 60 L40 60 Z' fill='yellow'/><text x='50' y='75' font-size='30' font-weight='bold' fill='yellow' text-anchor='middle'>⚽</text></svg>" alt="Os Håndball logo placeholder">
-            </div>
-
-            <p class="company-name" id="display-company-name">Os Håndball</p>
-            <p class="company-details">#88688 • OS TURNFORENING</p>
-            
-            <h1 class="amount-display" id="display-amount">30 kr</h1>
-            
-            <div class="fee-info">
-                Vipps tar ingen gebyr når du betaler til en bedrift. Uansett beløp 🙌
-            </div>
-
-            <div class="bank-details">
-                <div class="nordea-logo"></div>
-                <div class="bank-info">
-                    <span class="bank-number">6011.17.67591</span>
-                </div>
-                <div class="bank-label">
-                    bank
-                    <br>
-                    axept
-                </div>
-                <span class="bank-arrow">&gt;</span>
+                <h1>100 000 kr</h1>
+                <p>Komplett kjøkken</p>
             </div>
         </div>
+        
+        <div class="btn-pay-fixed" id="pay-button-container">
+            <button class="btn-pay" id="pay-button-start">Betal</button>
+        </div>
 
-        <button class="btn-pay orange" style="position: static; transform: none; margin-bottom: 20px;">Betal</button>
+
+        <div class="confirmation-screen" id="confirmation-screen">
+            <div class="confirmation-content">
+                <div class="header">
+                    <span class="back-arrow" onclick="goBack()">&#x2190;</span>
+                    <h2>Kort oppsummert</h2>
+                </div>
+                
+                <div class="os-logo">
+                    <img src="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><circle cx='50' cy='50' r='45' fill='black'/><text x='50' y='30' font-size='20' font-weight='bold' fill='white' text-anchor='middle'>HÅNDBALL</text><path d='M50 40 L60 60 L40 60 Z' fill='yellow'/><text x='50' y='75' font-size='30' font-weight='bold' fill='yellow' text-anchor='middle'>⚽</text></svg>" alt="Os Håndball logo placeholder">
+                </div>
+
+                <p class="company-name" id="display-company-name">Os Håndball</p>
+                <p class="company-details">#88688 • OS TURNFORENING</p>
+                
+                <h1 class="amount-display" id="display-amount">30 kr</h1>
+                
+                <div class="fee-info">
+                    Vipps tar ingen gebyr når du betaler til en bedrift. Uansett beløp 🙌
+                </div>
+
+                <div class="bank-details">
+                    <div class="nordea-logo" style="color: white; font-family: sans-serif;">Nordea</div>
+                    <div class="bank-info">
+                        <span class="bank-number">6011.17.67591</span>
+                    </div>
+                    <div class="bank-label">
+                        bank<br>axept
+                    </div>
+                    <span class="bank-arrow">&gt;</span>
+                </div>
+            </div>
+
+            <div class="btn-pay-fixed" style="background-color: var(--dark-background); border-top: none;">
+                <button class="btn-pay">Betal</button>
+            </div>
+        </div>
     </div>
 
     <script>
+        const appContainer = document.querySelector('.app-container');
         const startScreen = document.getElementById('start-screen');
-        const payButtonStart = document.getElementById('pay-button');
-        const confettiBg = document.querySelector('.confetti-background');
+        const payButtonStartContainer = document.getElementById('pay-button-container');
+        const payButtonStart = document.getElementById('pay-button-start');
         const confirmationScreen = document.getElementById('confirmation-screen');
 
         const displayAmount = document.getElementById('display-amount');
         const displayCompanyName = document.getElementById('display-company-name');
         
-        // --- HARDCODED MOCK DATA ---
-        // We use the data from the two images to simulate the transition
+        // Data for betalingen (fra bilde 2)
         const mockPaymentDetails = {
-            amount: "30 kr", // Amount from image 2
-            company: "Os Håndball", // Company from image 2
+            amount: "30 kr", 
+            company: "Os Håndball", 
         };
 
+        // Funksjon for å bytte skjerm
         payButtonStart.addEventListener('click', () => {
-            // 1. Hide the Start Screen elements
+            // Skjul start-elementene
             startScreen.classList.add('hidden');
-            payButtonStart.classList.add('hidden');
-            confettiBg.classList.add('hidden');
+            payButtonStartContainer.classList.add('hidden');
             
-            // 2. Set the data on the Confirmation Screen (even though it's hardcoded based on image 2)
+            // Oppdater data (selv om det er mock data)
             displayAmount.textContent = mockPaymentDetails.amount;
             displayCompanyName.textContent = mockPaymentDetails.company;
 
-            // 3. Show the Confirmation Screen
+            // Vis bekreftelsesskjermen (og bytt bakgrunn)
             confirmationScreen.classList.add('active');
-
-            // Optional: Hide the main body background/styling if needed, but the black overlay handles it
-            document.body.style.backgroundColor = 'black';
-            document.body.style.minHeight = '100vh';
+            appContainer.style.backgroundColor = 'var(--dark-background)';
+            document.body.style.backgroundColor = 'var(--dark-background)'; 
         });
+
+        // Funksjon for å gå tilbake
+        function goBack() {
+            confirmationScreen.classList.remove('active');
+            startScreen.classList.remove('hidden');
+            payButtonStartContainer.classList.remove('hidden');
+
+            // Tilbakestill bakgrunnen
+            appContainer.style.backgroundColor = 'transparent';
+            document.body.style.backgroundColor = '#f0f0f0'; 
+        }
 
     </script>
 </body>
