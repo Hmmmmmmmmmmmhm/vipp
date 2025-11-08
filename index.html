@@ -3,16 +3,21 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <title>Vipps - Kort oppsummert</title>
+    <title>Vipps - Kort oppsummert (1:1)</title>
     <style>
         /* CSS Variabler og global styling for Vipps (Mørk modus) */
         :root {
             --vipps-orange: #FF6633;
-            --dark-background: #000000;
-            --dark-card: #1C1C1E;
-            --text-light: #F0F0F0;
-            --text-gray: #A0A0A0;
+            --vipps-dark-bg: #000000;
+            --vipps-card-bg: #1C1C1E;
+            --vipps-text-light: #F0F0F0;
+            --vipps-text-gray: #A0A0A0;
+            --vipps-fee-bg: #55271A; /* Fargen på gebyr-boksen */
+            --nordea-red: #CC0033;
+            /* Apple systemfont for iOS-lignende utseende */
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            -webkit-font-smoothing: antialiased; /* For jevnere tekst på macOS/iOS */
+            -moz-osx-font-smoothing: grayscale; /* For jevnere tekst på macOS */
         }
 
         body {
@@ -22,30 +27,34 @@
             justify-content: center;
             align-items: flex-start; /* Justerer innholdet mot toppen */
             min-height: 100vh;
-            background-color: var(--dark-background);
-            color: var(--text-light);
+            background-color: var(--vipps-dark-bg);
+            color: var(--vipps-text-light);
+            overflow: hidden; /* Skjuler eventuell scrollbar hvis innholdet er for stort */
         }
 
         /* Hovedcontainer for å simulere mobil-visning */
         .app-container {
             width: 100%;
-            max-width: 450px;
-            min-height: 100vh;
+            max-width: 450px; /* Typisk maks bredde for mobil */
+            min-height: 100vh; /* Sikrer at den fyller hele høyden */
             display: flex;
             flex-direction: column;
             padding: 0;
             box-sizing: border-box;
+            background-color: var(--vipps-dark-bg); /* Sørger for at bakgrunnen er svart */
+            position: relative; /* For å posisjonere fixed-elementer */
         }
 
         /* --- Innhold: Kort oppsummert --- */
 
         .screen-content {
-            flex-grow: 1;
+            flex-grow: 1; /* Tar all tilgjengelig plass */
             display: flex;
             flex-direction: column;
             align-items: center;
             width: 100%;
-            padding: 20px;
+            padding: 0 20px; /* Horisontal padding for innholdet */
+            padding-bottom: 120px; /* Plass til fixed "Betal"-knapp */
             box-sizing: border-box;
         }
 
@@ -53,26 +62,29 @@
             width: 100%;
             display: flex;
             align-items: center;
-            padding: 10px 0;
+            padding: 15px 0 10px 0; /* litt mer padding på toppen */
             margin-bottom: 30px;
         }
 
         .header .back-arrow {
             font-size: 24px;
-            color: var(--text-light);
+            color: var(--vipps-text-light);
             padding-right: 20px;
+            cursor: pointer; /* Gjør pilen klikkbar, selv om den ikke gjør noe i denne single-page versjonen */
+            font-weight: 500; /* Vanlig pil har ofte litt tykkere strek */
         }
 
         .header h2 {
             font-size: 18px;
-            font-weight: 600;
+            font-weight: 600; /* Semibold for tittel */
             margin: 0;
             flex-grow: 1;
             text-align: center;
-            margin-left: -44px; /* Justerer for pilen for å sentrere teksten */
+            /* Justerer for pilen for å sentrere teksten i midten av headeren */
+            margin-left: -44px; 
         }
         
-        .os-logo {
+        .os-logo-container {
             width: 80px;
             height: 80px;
             border-radius: 50%;
@@ -81,36 +93,42 @@
             align-items: center;
             justify-content: center;
             margin-bottom: 20px;
-            box-shadow: 0 0 0 2px #fff;
+            box-shadow: 0 0 0 2px #fff; /* En tynn hvit ramme */
+            overflow: hidden; /* Sikrer at logoen holder seg innenfor sirkelen */
         }
         
-        /* Placeholder for Os Håndball logo */
-        .os-logo img {
-            width: 100%;
-            height: 100%;
-            object-fit: contain;
+        /* Base64-kodet bilde av Os Håndball-logoen */
+        .os-logo-container img {
+            width: 100%; /* Fyller containeren */
+            height: 100%; /* Fyller containeren */
+            object-fit: contain; /* Sikrer at hele logoen vises */
+            /* Innebygd Base64-bilde data for Os Håndball logo */
+            content: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAJgAAACGAQMAAAC/9yW4AAAABlBMVEVHcEz///+y2R5sAAAAAXRSTlMAQObYZgAAAFpJREFUKM9jYKAAM82hGEYEhhwYk8X+z2cI4cCYxWAwQhgyJ/H/72dIwQO3z9D/Zf+//y3O/3/b9//M8f/hDwYf/P9vPv7/FmEAAO4v3d/8c6NTAAAAAElFTkSuQmCC');
         }
 
         .company-name {
             font-size: 18px;
-            font-weight: 500;
+            font-weight: 500; /* Medium vekt */
             margin-bottom: 5px;
+            color: var(--vipps-text-light);
         }
 
         .company-details {
             font-size: 14px;
-            color: var(--text-gray);
+            color: var(--vipps-text-gray);
             margin-bottom: 40px;
+            font-weight: 400; /* Normal vekt */
         }
 
         .amount-display {
             font-size: 48px;
-            font-weight: 700;
+            font-weight: 700; /* Bold */
             margin-bottom: 40px;
+            color: var(--vipps-text-light);
         }
 
         .fee-info {
-            background-color: #55271a; /* Mørk, rødbrun farge */
+            background-color: var(--vipps-fee-bg); 
             padding: 15px;
             border-radius: 10px;
             font-size: 15px;
@@ -120,10 +138,18 @@
             line-height: 1.3;
             text-align: center;
             max-width: 350px;
+            box-sizing: border-box;
+            color: var(--vipps-text-light); /* Tekstfarge inne i boksen */
+        }
+        
+        .fee-info .emoji {
+            font-size: 18px; /* Litt større emoji for bedre synlighet */
+            vertical-align: middle;
+            margin-left: 5px;
         }
 
         .bank-details {
-            background-color: var(--dark-card); /* Mørk grå/svart kort */
+            background-color: var(--vipps-card-bg); /* Mørk grå/svart kort */
             padding: 15px;
             border-radius: 10px;
             width: 100%;
@@ -131,12 +157,14 @@
             justify-content: space-between;
             align-items: center;
             max-width: 350px;
+            box-sizing: border-box;
+            cursor: pointer;
         }
 
         .bank-details .nordea-logo {
-            width: 50px;
-            height: 20px;
-            background-color: #cc0033;
+            width: 60px; /* Justert bredde for Nordea logo */
+            height: 20px; /* Justert høyde for Nordea logo */
+            background-color: var(--nordea-red);
             border-radius: 4px;
             margin-right: 15px;
             display: flex;
@@ -145,43 +173,57 @@
             font-size: 10px;
             font-weight: bold;
             color: white;
+            /* Innebygd Base64-bilde data for Nordea logo (tekst) */
+            background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 60 20" fill="none"><rect width="60" height="20" rx="4" fill="%23CC0033"/><text x="30" y="14" font-family="-apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Helvetica, Arial, sans-serif" font-size="10" font-weight="bold" fill="white" text-anchor="middle">Nordea</text></svg>');
+            background-size: contain;
+            background-repeat: no-repeat;
+            background-position: center;
         }
 
         .bank-details .bank-info {
             text-align: left;
             flex-grow: 1;
+            line-height: 1.3; /* Justert linjehøyde */
         }
 
         .bank-details .bank-number {
             font-size: 16px;
-            font-weight: 600;
-            color: var(--text-light);
+            font-weight: 600; /* Semibold */
+            color: var(--vipps-text-light);
         }
 
         .bank-details .bank-label {
             font-size: 10px;
-            color: var(--text-gray);
+            color: var(--vipps-text-gray);
             line-height: 1.1;
             text-align: right;
             margin-left: 10px;
+            display: flex; /* Bruker flex for å justere "bank axept" vertikalt */
+            flex-direction: column;
+            justify-content: center;
+            align-items: flex-end;
+            font-weight: 400; /* Normal vekt */
         }
 
         .bank-details .bank-arrow {
             font-size: 20px;
-            color: var(--text-gray);
+            color: var(--vipps-text-gray);
             margin-left: 10px;
+            font-weight: 500; /* Litt tykkere pil for utseendet */
         }
         
-        /* Betal-knapp for Start Screen (fast nederst) */
+        /* Betal-knapp (fast nederst) */
         .btn-pay-fixed {
             width: 100%;
             padding: 20px 0;
             text-align: center;
-            background-color: var(--dark-background); 
-            position: fixed;
+            background-color: var(--vipps-dark-bg); /* Matcher bakgrunnen */
+            position: sticky; /* Bruker sticky for å holde den nederst */
             bottom: 0;
-            max-width: 450px; 
+            max-width: 450px; /* Matcher app-container bredde */
             z-index: 20;
+            margin-top: auto; /* Skyver knappen helt nederst i flex-containeren */
+            box-sizing: border-box; /* Inkluderer padding i bredden */
         }
 
         .btn-pay {
@@ -190,11 +232,13 @@
             border: none;
             border-radius: 14px;
             font-size: 18px;
-            font-weight: 600;
+            font-weight: 600; /* Semibold */
             cursor: pointer;
             background-color: var(--vipps-orange);
             color: white;
             box-shadow: 0 4px 10px rgba(255, 102, 51, 0.4);
+            -webkit-appearance: none; /* Fjerner standard knappestyling på iOS */
+            outline: none; /* Fjerner fokusramme */
         }
     </style>
 </head>
@@ -208,8 +252,8 @@
                 <h2>Kort oppsummert</h2>
             </div>
             
-            <div class="os-logo">
-                <img src="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><circle cx='50' cy='50' r='45' fill='black'/><text x='50' y='30' font-size='20' font-weight='bold' fill='white' text-anchor='middle'>HÅNDBALL</text><path d='M50 40 L60 60 L40 60 Z' fill='yellow'/><text x='50' y='75' font-size='30' font-weight='bold' fill='yellow' text-anchor='middle'>⚽</text></svg>" alt="Os Håndball logo placeholder">
+            <div class="os-logo-container">
+                <img alt="Os Håndball logo">
             </div>
 
             <p class="company-name">Os Håndball</p>
@@ -218,12 +262,11 @@
             <h1 class="amount-display">30 kr</h1>
             
             <div class="fee-info">
-                Vipps tar ingen gebyr når du betaler til en bedrift. Uansett beløp 🙌
+                Vipps tar ingen gebyr når du betaler til en bedrift. Uansett beløp <span class="emoji">🙌</span>
             </div>
 
             <div class="bank-details">
-                <div class="nordea-logo">Nordea</div>
-                <div class="bank-info">
+                <div class="nordea-logo"></div> <div class="bank-info">
                     <span class="bank-number">6011.17.67591</span>
                 </div>
                 <div class="bank-label">
