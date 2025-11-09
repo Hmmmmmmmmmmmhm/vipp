@@ -1,426 +1,528 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="no">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <title>Vipps Simulator (PIKSELPERFEKT)</title>
+    <title>Vipps Simulator</title>
     <style>
-        /* CSS Variabler og global styling */
         :root {
-            --vipps-orange: #FF6633;
+            --vipps-orange: #FF6333;
             --vipps-purple: #7A3D97;
-            /* Justert mørk bakgrunn - Dyp mørkegrå som i bildet */
-            --vipps-dark-bg: #121212; 
-            --vipps-card-bg: #2C2C2E; /* Lett lysere grå for kortet */
+            --vipps-dark-bg: #121212;
+            --vipps-card-bg: #2C2C2E;
             --vipps-text-light: #F0F0F0;
             --vipps-text-gray: #A0A0A0;
-            /* Justert farge for gebyr-boksen - Mer rustrød/brun */
-            --vipps-fee-bg: #803D2E; 
-            --nordea-red: #CC0033;
-            
-            /* LYS MODUS farger for kvittering */
+            --vipps-fee-bg: #803D2E;
+            --nordea-red: #0000A0;
             --light-bg: #F0F0F0;
             --light-card: #FFFFFF;
             --text-dark: #1C1C1E;
-
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-            -webkit-font-smoothing: antialiased;
-            -moz-osx-font-smoothing: grayscale;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
         }
 
         body {
-            margin: 0;
-            padding: 0;
-            display: flex;
-            justify-content: center;
-            min-height: 100vh;
-            background-color: var(--vipps-dark-bg); /* Start bakgrunn */
+            background-color: #000;
             color: var(--vipps-text-light);
             overflow: hidden;
-            transition: background-color 0.3s;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
         }
 
         .app-container {
-            width: 100%;
-            max-width: 450px; 
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column;
+            width: 100vw;
+            height: 100vh;
+            max-width: calc(100vh * 9 / 16);
+            max-height: calc(100vw * 16 / 9);
             position: relative;
             background-color: var(--vipps-dark-bg);
-            transition: background-color 0.3s;
-        }
-
-        /* --- SKJERM 1: Os Håndball (Mørk modus - FØR Betaling) --- */
-
-        .start-screen {
-            flex-grow: 1;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            width: 100%;
-            padding: 0 20px;
-            padding-bottom: 120px; 
-            box-sizing: border-box;
-            opacity: 1;
-            transition: opacity 0.3s;
-        }
-
-        .header {
-            width: 100%;
-            display: flex;
-            align-items: center;
-            padding: 15px 0 10px 0;
-            margin-bottom: 30px;
-        }
-
-        .header .back-arrow {
-            font-size: 24px;
-            color: var(--vipps-text-light);
-            padding-right: 20px;
-            cursor: pointer;
-            font-weight: 500;
-        }
-
-        .header h2 {
-            font-size: 18px;
-            font-weight: 600;
-            margin: 0;
-            flex-grow: 1;
-            text-align: center;
-            margin-left: -44px; 
-        }
-        
-        /* Os Håndball logo */
-        .os-logo-container {
-            width: 80px;
-            height: 80px;
-            border-radius: 50%;
-            background-color: #ffffff; 
-            margin-bottom: 20px;
-            box-shadow: 0 0 0 2px #fff;
             overflow: hidden;
         }
-        
-        .os-logo-container img {
-            width: 100%;
-            height: 100%;
-            object-fit: contain;
-            /* Base64 for Os Håndball logo */
-            content: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAJgAAACGAQMAAAC/9yW4AAAABlBMVEVHcEz///+y2R5sAAAAAXRSTlMAQObYZgAAAFpJREFUKM9jYKAAM82hGEYEhhwYk8X+z2cI4cCYxWAwQhgyJ/H/72dIwQO3z9D/Zf+//y3O/3/b9//M8f/hDwYf/P9vPv7/FmEAAO4v3d/8c6NTAAAAAElFTkSuQmCC');
-        }
 
-        .company-name {
-            font-size: 18px;
-            font-weight: 500;
-            margin-bottom: 5px;
-        }
-
-        .company-details {
-            font-size: 14px;
-            color: var(--vipps-text-gray);
-            margin-bottom: 40px;
-            font-weight: 400;
-        }
-
-        .amount-display {
-            font-size: 48px;
-            font-weight: 700;
-            margin-bottom: 40px;
-        }
-
-        .fee-info {
-            background-color: var(--vipps-fee-bg); 
-            padding: 15px;
-            border-radius: 10px;
-            font-size: 15px;
-            font-weight: 500;
-            margin-bottom: 30px;
-            width: 100%;
-            line-height: 1.3;
-            text-align: center;
-            max-width: 350px;
-            box-sizing: border-box;
-        }
-
-        .bank-details {
-            background-color: var(--vipps-card-bg); /* Bruker den litt lysere gråfargen */
-            padding: 15px;
-            border-radius: 10px;
-            width: 100%;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            max-width: 350px;
-            box-sizing: border-box;
-            cursor: pointer;
-        }
-
-        .bank-details .nordea-logo {
-            width: 60px;
-            height: 20px;
-            background-color: var(--nordea-red);
-            border-radius: 4px;
-            margin-right: 15px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 10px;
-            font-weight: bold;
-            color: white;
-            /* Base64 for Nordea logo tekst */
-            background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 60 20" fill="none"><rect width="60" height="20" rx="4" fill="%23CC0033"/><text x="30" y="14" font-family="-apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Helvetica, Arial, sans-serif" font-size="10" font-weight="bold" fill="white" text-anchor="middle">Nordea</text></svg>');
-            background-size: contain;
-            background-repeat: no-repeat;
-            background-position: center;
-        }
-
-        .bank-details .bank-label {
-            font-size: 10px;
-            color: var(--vipps-text-gray);
-            line-height: 1.1;
-            text-align: right;
-            margin-left: 10px;
+        /* Setup Screen */
+        .setup-screen {
+            padding: 5vh 6vw;
             display: flex;
             flex-direction: column;
-            justify-content: center;
-            align-items: flex-end;
-            font-weight: 400;
+            align-items: center;
+            height: 100%;
+            overflow-y: auto;
         }
 
-        .bank-details .bank-number {
-            font-size: 16px;
-            font-weight: 600;
-        }
-
-        .bank-details .bank-arrow {
-            font-size: 20px;
-            color: var(--vipps-text-gray);
-            margin-left: 10px;
-            font-weight: 500;
-        }
-
-        /* Betal-knapp for Skjerm 1 */
-        .btn-pay-fixed {
-            width: 100%;
-            padding: 20px 0;
+        .setup-screen h1 {
+            font-size: clamp(24px, 5vw, 32px);
+            margin-bottom: 1vh;
             text-align: center;
-            background-color: var(--vipps-dark-bg); 
-            position: absolute;
-            bottom: 0;
-            max-width: 450px; 
-            z-index: 20;
-            box-sizing: border-box;
-            transition: background-color 0.3s;
         }
 
-        .btn-pay {
-            width: 90%;
-            padding: 16px;
+        .setup-screen p {
+            color: var(--vipps-text-gray);
+            margin-bottom: 4vh;
+            text-align: center;
+            font-size: clamp(14px, 3vw, 16px);
+        }
+
+        .input-group {
+            width: 100%;
+            margin-bottom: 3vh;
+        }
+
+        .input-group label {
+            display: block;
+            margin-bottom: 1vh;
+            font-size: clamp(12px, 2.5vw, 14px);
+            color: var(--vipps-text-gray);
+        }
+
+        .input-group input {
+            width: 100%;
+            padding: 3vh 3vw;
+            background-color: var(--vipps-card-bg);
             border: none;
-            border-radius: 14px;
-            font-size: 18px;
-            font-weight: 600;
-            cursor: pointer;
-            background-color: var(--vipps-orange);
-            color: white;
-            box-shadow: 0 4px 10px rgba(255, 102, 51, 0.4);
-            -webkit-appearance: none;
+            border-radius: 12px;
+            color: var(--vipps-text-light);
+            font-size: clamp(14px, 3vw, 16px);
             outline: none;
         }
 
-        /* --- SKJERM 2: Nordic Kitchen (ETTER Betaling/Kvittering) --- */
+        .input-group input::placeholder {
+            color: var(--vipps-text-gray);
+        }
 
-        .confirmation-screen {
+        .btn-continue {
+            width: 100%;
+            padding: 3vh;
+            background-color: var(--vipps-orange);
+            color: white;
+            border: none;
+            border-radius: 14px;
+            font-size: clamp(16px, 3.5vw, 18px);
+            font-weight: 600;
+            cursor: pointer;
+            margin-top: 3vh;
+        }
+
+        /* Payment Screen */
+        .payment-screen {
+            display: none;
+            opacity: 0;
+        }
+
+        .payment-screen.active {
+            display: block;
+            animation: fadeIn 0.3s forwards;
+        }
+
+        @keyframes fadeIn {
+            to { opacity: 1; }
+        }
+
+        .header {
+            display: flex;
+            align-items: center;
+            padding: 3vh 5vw;
+        }
+
+        .back-arrow {
+            font-size: clamp(24px, 5vw, 32px);
+            cursor: pointer;
+            margin-right: 4vw;
+        }
+
+        .header h2 {
+            font-size: clamp(16px, 3.5vw, 18px);
+            font-weight: 600;
+            flex: 1;
+            text-align: center;
+            margin-right: 9vw;
+        }
+
+        .payment-content {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 0 6vw 20vh 6vw;
+        }
+
+        .company-logo {
+            width: clamp(70px, 15vw, 90px);
+            height: clamp(70px, 15vw, 90px);
+            border-radius: 50%;
+            background: linear-gradient(135deg, #FFD700 0%, #FFA500 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: clamp(32px, 7vw, 40px);
+            margin-bottom: 3vh;
+            box-shadow: 0 4px 12px rgba(255, 165, 0, 0.3);
+        }
+
+        .company-name {
+            font-size: clamp(18px, 4vw, 22px);
+            font-weight: 600;
+            margin-bottom: 1vh;
+        }
+
+        .company-details {
+            font-size: clamp(12px, 2.5vw, 14px);
+            color: var(--vipps-text-gray);
+            margin-bottom: 6vh;
+        }
+
+        .amount-display {
+            font-size: clamp(40px, 10vw, 60px);
+            font-weight: 700;
+            margin-bottom: 6vh;
+        }
+
+        .fee-info {
+            background-color: var(--vipps-fee-bg);
+            padding: 3vh 4vw;
+            border-radius: 12px;
+            font-size: clamp(13px, 3vw, 15px);
+            text-align: center;
+            margin-bottom: 4vh;
+            width: 100%;
+            max-width: 85%;
+            line-height: 1.4;
+        }
+
+        .bank-card {
+            background-color: var(--vipps-card-bg);
+            padding: 3vh 4vw;
+            border-radius: 14px;
+            width: 100%;
+            max-width: 85%;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .bank-logo {
+            width: clamp(60px, 12vw, 70px);
+            height: clamp(24px, 5vw, 28px);
+            background-color: var(--nordea-red);
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 700;
+            font-size: clamp(9px, 2vw, 11px);
+        }
+
+        .bank-number {
+            font-size: clamp(15px, 3.5vw, 17px);
+            font-weight: 600;
+            flex: 1;
+            margin-left: 3vw;
+        }
+
+        .bank-label {
+            font-size: clamp(9px, 2vw, 10px);
+            color: var(--vipps-text-gray);
+            text-align: right;
+            line-height: 1.3;
+            margin-right: 2vw;
+        }
+
+        .arrow {
+            font-size: clamp(20px, 4vw, 22px);
+            color: var(--vipps-text-gray);
+        }
+
+        .pay-button-container {
             position: absolute;
-            top: 0;
+            bottom: 0;
             left: 0;
             width: 100%;
-            min-height: 100vh;
-            display: flex; 
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            background-color: var(--light-bg); 
-            color: var(--text-dark);
-            z-index: 30;
-            opacity: 0;
-            visibility: hidden;
-            transition: opacity 0.3s, visibility 0.3s;
+            padding: 3vh 5vw;
+            background-color: var(--vipps-dark-bg);
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
         }
 
-        .confirmation-screen.active {
-            opacity: 1;
-            visibility: visible;
+        .btn-pay {
+            width: 100%;
+            padding: 3vh;
+            background-color: var(--vipps-orange);
+            color: white;
+            border: none;
+            border-radius: 14px;
+            font-size: clamp(16px, 3.5vw, 18px);
+            font-weight: 600;
+            cursor: pointer;
+            box-shadow: 0 4px 16px rgba(255, 99, 51, 0.4);
         }
-        
-        /* Konfetti mønster (1:1 likt fra bildet) */
-        .confetti-background {
+
+        /* Confirmation Screen */
+        .confirmation-screen {
+            display: none;
             position: absolute;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            /* Base64 for konfetti mønster. */
-            background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="150" height="150" viewBox="0 0 150 150"><path fill="%23FFD138" d="M10 5 L20 15 L10 25 Z"/><path fill="%23CC5BFF" d="M120 125 L130 135 L120 145 Z"/><path fill="%23FF6633" d="M40 80 L50 90 L40 100 Z"/><path fill="%23CC5BFF" d="M70 10 L80 20 L70 30 Z"/><path fill="%23FFD138" d="M100 60 L110 70 L100 80 Z"/><rect x="50" y="50" width="50" height="50" fill="url(%23pattern)" opacity="0.8"/><defs><pattern id="pattern" patternUnits="userSpaceOnUse" width="100" height="100"><g opacity="0.8"><path d="M50 50 C 40 40, 60 40, 50 50 L 50 70 C 60 70, 40 70, 50 50 Z" fill="%23CC5BFF"/></g></pattern></defs></svg>');
-            background-size: 150px 150px;
-            opacity: 0.9;
-            z-index: 0;
+            background-color: var(--light-bg);
+            align-items: center;
+            justify-content: center;
+            z-index: 100;
+            opacity: 0;
         }
 
-        .vipps-card-receipt {
-            background-color: var(--light-card);
-            /* Justert border-radius for å matche bildet nøyaktig (ca. 16-20px) */
-            border-radius: 20px; 
-            padding: 50px 30px;
-            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+        .confirmation-screen.active {
+            display: flex;
+            animation: fadeIn 0.4s forwards;
+        }
+
+        .confetti-bg {
+            position: absolute;
+            width: 120%;
+            height: 120%;
+            left: -10%;
+            top: -10%;
+            overflow: hidden;
+            filter: blur(3px);
+            transition: transform 0.1s ease-out;
+            will-change: transform;
+        }
+
+        .confetti {
+            position: absolute;
+            font-size: clamp(50px, 10vw, 80px);
+        }
+
+        .receipt-card {
+            background-color: white;
+            border-radius: 24px;
+            padding: 8vh 7vw;
             text-align: center;
-            width: 80%;
-            max-width: 300px;
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12);
             position: relative;
             z-index: 10;
+            max-width: 75%;
+            width: 75%;
         }
 
-        .vipps-card-receipt h1 {
-            font-size: 40px;
+        .receipt-header {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 3vh;
+        }
+
+        .vipps-icon {
+            width: clamp(32px, 7vw, 40px);
+            height: clamp(32px, 7vw, 40px);
+            background-color: var(--vipps-orange);
+            border-radius: 10px;
+            margin-right: 3vw;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
             font-weight: 700;
-            margin: 15px 0 5px 0;
-            color: var(--text-dark);
+            font-size: clamp(16px, 4vw, 20px);
         }
 
-        .vipps-card-receipt p {
-            margin: 5px 0;
-            font-size: 16px;
-            color: #5a5a5a;
-        }
-
-        .vipps-card-receipt .logo-details {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin-bottom: 20px;
-        }
-
-        .vipps-card-receipt .logo-icon {
-            background-color: var(--vipps-purple);
-            width: 30px;
-            height: 30px;
-            border-radius: 8px;
-            margin-right: 10px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        /* Innebygd Vipps logo (kvadrat med V-ikon) */
-        .vipps-card-receipt .logo-icon img {
-            width: 18px; 
-            height: 18px;
-            content: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="white"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/></svg>');
-        }
-        
-        .vipps-card-receipt .company-info {
-            font-size: 14px;
-            line-height: 1.2;
+        .receipt-business {
             text-align: left;
         }
-        
-        .vipps-card-receipt .company-info p {
-            color: var(--text-dark);
+
+        .receipt-business-name {
+            font-size: clamp(14px, 3vw, 16px);
             font-weight: 600;
-            margin: 0;
+            color: var(--text-dark);
         }
 
-        /* Hjelpeklasse for å skjule elementer ordentlig */
+        .receipt-business-id {
+            font-size: clamp(10px, 2vw, 12px);
+            color: #888;
+        }
+
+        .receipt-amount {
+            font-size: clamp(36px, 9vw, 52px);
+            font-weight: 700;
+            color: var(--text-dark);
+            margin: 3vh 0;
+        }
+
+        .receipt-description {
+            font-size: clamp(14px, 3vw, 16px);
+            color: #666;
+        }
+
         .hidden {
             display: none !important;
         }
     </style>
 </head>
 <body>
+    <div class="app-container">
+        <!-- Setup Screen -->
+        <div class="setup-screen" id="setupScreen">
+            <h1>⚙️ Vipps Simulator</h1>
+            <p>Fyll inn informasjon for betalingen</p>
 
-    <div class="app-container" id="app-container">
-        
-        <div class="start-screen" id="start-screen">
+            <div class="input-group">
+                <label>Bedriftsnavn</label>
+                <input type="text" id="businessName" placeholder="F.eks. Nordic Kitchen" value="Nordic Kitchen">
+            </div>
+
+            <div class="input-group">
+                <label>Bedrifts-ID</label>
+                <input type="text" id="businessId" placeholder="F.eks. #986362" value="#986362">
+            </div>
+
+            <div class="input-group">
+                <label>Bedrifts organisasjonsnavn</label>
+                <input type="text" id="orgName" placeholder="F.eks. NORDIC KITCHEN AS" value="NORDIC KITCHEN AS">
+            </div>
+
+            <div class="input-group">
+                <label>Beløp (kr)</label>
+                <input type="number" id="amount" placeholder="F.eks. 100000" value="100000">
+            </div>
+
+            <div class="input-group">
+                <label>Beskrivelse</label>
+                <input type="text" id="description" placeholder="F.eks. Komplett kjøkken" value="Komplett kjøkken">
+            </div>
+
+            <button class="btn-continue" onclick="startPayment()">Start betaling</button>
+        </div>
+
+        <!-- Payment Screen -->
+        <div class="payment-screen" id="paymentScreen">
             <div class="header">
-                <span class="back-arrow" onclick="location.reload()">&#x2190;</span> 
+                <span class="back-arrow" onclick="goBack()">←</span>
                 <h2>Kort oppsummert</h2>
             </div>
-            
-            <div class="os-logo-container">
-                <img alt="Os Håndball logo">
+
+            <div class="payment-content">
+                <div class="company-logo" id="paymentLogo">🏢</div>
+                <div class="company-name" id="paymentBusinessName"></div>
+                <div class="company-details" id="paymentDetails"></div>
+                <div class="amount-display" id="paymentAmount"></div>
+
+                <div class="fee-info">
+                    Vipps tar ingen gebyr når du betaler til en bedrift. Uansett beløp 🙌
+                </div>
+
+                <div class="bank-card">
+                    <div class="bank-logo">Nordea</div>
+                    <div class="bank-number">6011.17.67591</div>
+                    <div class="bank-label">bank<br>axept</div>
+                    <div class="arrow">›</div>
+                </div>
             </div>
 
-            <p class="company-name">Os Håndball</p>
-            <p class="company-details">#88688 • OS TURNFORENING</p>
-            
-            <h1 class="amount-display">30 kr</h1>
-            
-            <div class="fee-info">
-                Vipps tar ingen gebyr når du betaler til en bedrift. Uansett beløp <span class="emoji">🙌</span>
-            </div>
-
-            <div class="bank-details">
-                <div class="nordea-logo"></div> 
-                <div class="bank-info">
-                    <span class="bank-number">6011.17.67591</span>
-                </div>
-                <div class="bank-label">
-                    bank<br>axept
-                </div>
-                <span class="bank-arrow">&gt;</span>
+            <div class="pay-button-container">
+                <button class="btn-pay" onclick="confirmPayment()">Betal</button>
             </div>
         </div>
-        
-        <div class="btn-pay-fixed" id="pay-button-container">
-            <button class="btn-pay" id="pay-button-start">Betal</button>
-        </div>
 
-
-        <div class="confirmation-screen" id="confirmation-screen">
-            <div class="confetti-background"></div>
-
-            <div class="vipps-card-receipt">
-                <div class="logo-details">
-                    <div class="logo-icon">
-                        <img alt="Vipps logo">
-                    </div>
-                    <div class="company-info">
-                        <p>#986362 • **NORDIC KITCHEN AS**</p>
+        <!-- Confirmation Screen -->
+        <div class="confirmation-screen" id="confirmationScreen">
+            <div class="confetti-bg" id="confettiBg"></div>
+            
+            <div class="receipt-card">
+                <div class="receipt-header">
+                    <div class="vipps-icon">V</div>
+                    <div class="receipt-business">
+                        <div class="receipt-business-name" id="receiptBusinessName"></div>
+                        <div class="receipt-business-id" id="receiptBusinessId"></div>
                     </div>
                 </div>
-                <h1>100 000 kr</h1>
-                <p>Komplett kjøkken</p>
+                <div class="receipt-amount" id="receiptAmount"></div>
+                <div class="receipt-description" id="receiptDescription"></div>
             </div>
         </div>
     </div>
 
     <script>
-        const appContainer = document.getElementById('app-container');
-        const startScreen = document.getElementById('start-screen');
-        const payButtonStartContainer = document.getElementById('pay-button-container');
-        const payButtonStart = document.getElementById('pay-button-start');
-        const confirmationScreen = document.getElementById('confirmation-screen');
+        let paymentData = {};
 
-        // Funksjon for å bytte skjerm til Kvittering/Varsel
-        payButtonStart.addEventListener('click', () => {
-            // 1. Skjul Første skjerm (Os Håndball)
-            startScreen.classList.add('hidden');
-            payButtonStartContainer.classList.add('hidden');
-            
-            // 2. Vis Kvitteringsskjermen (Nordic Kitchen)
-            confirmationScreen.classList.add('active');
+        function startPayment() {
+            const businessName = document.getElementById('businessName').value || 'Nordic Kitchen';
+            const businessId = document.getElementById('businessId').value || '#986362';
+            const orgName = document.getElementById('orgName').value || 'NORDIC KITCHEN AS';
+            const amount = document.getElementById('amount').value || '100000';
+            const description = document.getElementById('description').value || 'Komplett kjøkken';
 
-            // 3. Juster app-container og body til lys modus
-            appContainer.style.backgroundColor = 'var(--light-bg)';
-            document.body.style.backgroundColor = 'var(--light-bg)';
-        });
+            paymentData = { businessName, businessId, orgName, amount, description };
 
-        // Funksjon for tilbake-pilen (laster siden på nytt)
-        function goBack() {
-            location.reload();
+            // Update payment screen
+            document.getElementById('paymentBusinessName').textContent = businessName;
+            document.getElementById('paymentDetails').textContent = `${businessId} • ${orgName}`;
+            document.getElementById('paymentAmount').textContent = formatAmount(amount) + ' kr';
+
+            // Show payment screen
+            document.getElementById('setupScreen').classList.add('hidden');
+            document.getElementById('paymentScreen').classList.add('active');
         }
 
+        function confirmPayment() {
+            // Update confirmation screen
+            document.getElementById('receiptBusinessName').textContent = paymentData.businessName;
+            document.getElementById('receiptBusinessId').textContent = `${paymentData.businessId} • ${paymentData.orgName}`;
+            document.getElementById('receiptAmount').textContent = formatAmount(paymentData.amount) + ' kr';
+            document.getElementById('receiptDescription').textContent = paymentData.description;
+
+            // Create confetti
+            createConfetti();
+
+            // Show confirmation
+            document.getElementById('confirmationScreen').classList.add('active');
+
+            // Add 3D parallax effect
+            if (window.DeviceOrientationEvent) {
+                window.addEventListener('deviceorientation', handleOrientation);
+            }
+        }
+
+        function handleOrientation(event) {
+            const confettiBg = document.getElementById('confettiBg');
+            const beta = event.beta || 0;  // X-axis tilt (-180 to 180)
+            const gamma = event.gamma || 0; // Y-axis tilt (-90 to 90)
+            
+            // Map device orientation to transform values
+            const x = (gamma / 90) * 20;  // Max 20px movement
+            const y = (beta / 180) * 20;  // Max 20px movement
+            
+            confettiBg.style.transform = `translate(${x}px, ${y}px)`;
+        }
+
+        function goBack() {
+            document.getElementById('paymentScreen').classList.remove('active');
+            document.getElementById('setupScreen').classList.remove('hidden');
+        }
+
+        function formatAmount(amount) {
+            return parseInt(amount).toLocaleString('no-NO');
+        }
+
+        function createConfetti() {
+            const container = document.getElementById('confettiBg');
+            container.innerHTML = '';
+            const emojis = ['🎉', '🎊', '✨', '⭐', '🌟'];
+            
+            for (let i = 0; i < 25; i++) {
+                const confetti = document.createElement('div');
+                confetti.className = 'confetti';
+                confetti.textContent = emojis[Math.floor(Math.random() * emojis.length)];
+                confetti.style.left = Math.random() * 100 + '%';
+                confetti.style.animationDelay = Math.random() * 2 + 's';
+                confetti.style.animationDuration = (Math.random() * 2 + 2) + 's';
+                container.appendChild(confetti);
+            }
+        }
     </script>
 </body>
 </html>
