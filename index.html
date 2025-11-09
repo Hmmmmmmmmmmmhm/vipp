@@ -5,24 +5,19 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
     <title>Vipps Simulator</title>
     <style>
-        /* --- Farge- og UI-variabler (PIKSELNØYAKTIG) --- */
         :root {
-            --vipps-orange: #FF6633; /* Hovedknapp */
-            --vipps-purple: #7A3D97; /* Lite Vipps-ikon */
-            --vipps-dark-bg: #121212; /* Dyp mørkegrå (Startside) */
-            --vipps-card-bg: #2C2C2E; /* Bakgrunn for kort/input på mørk side */
+            --vipps-orange: #FF5C39;
+            --vipps-purple: #7A3D97;
+            --vipps-dark-bg: #121212;
+            --vipps-card-bg: #2C2C2E;
             --vipps-text-light: #F0F0F0;
             --vipps-text-gray: #A0A0A0;
-            --vipps-fee-bg: #803D2E; /* Rustrød/brun for gebyrinfo */
-            --nordea-red: #CC0033; /* Nordea farge */
-            
-            --light-bg: #F0F0F0; /* Bakgrunn for kvittering */
+            --vipps-fee-bg: #6B3A2E;
+            --nordea-blue: #0000A0;
+            --light-bg: #F0F0F0;
             --light-card: #FFFFFF;
-            --text-dark: #1C1C1E; /* Mørk tekst for kvittering */
-
+            --text-dark: #1C1C1E;
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-            -webkit-font-smoothing: antialiased;
-            -moz-osx-font-smoothing: grayscale;
         }
 
         * {
@@ -32,277 +27,539 @@
         }
 
         body {
-            background-color: var(--vipps-dark-bg);
+            background-color: #000;
             color: var(--vipps-text-light);
             overflow: hidden;
             min-height: 100vh;
             display: flex;
             justify-content: center;
-            /* Sikrer at appen starter øverst for mobilfølelsen */
-            align-items: flex-start; 
+            align-items: center;
         }
 
         .app-container {
-            width: 100%;
+            width: 100vw;
             height: 100vh;
-            max-width: 450px; /* Maks mobilbredde */
+            max-width: calc(100vh * 9 / 16);
+            max-height: calc(100vw * 16 / 9);
             position: relative;
             background-color: var(--vipps-dark-bg);
             overflow: hidden;
-            /* Fjerner de komplekse responsivitetsberegningene */
-            max-height: none; 
-            min-height: 100vh;
         }
-        
-        /* --- Generell UI-justering --- */
-        
+
+        /* Setup Screen */
+        .setup-screen {
+            padding: 30px 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            height: 100%;
+            overflow-y: auto;
+        }
+
+        .setup-screen h1 {
+            font-size: 24px;
+            margin-bottom: 8px;
+        }
+
+        .setup-screen p {
+            color: var(--vipps-text-gray);
+            margin-bottom: 30px;
+            font-size: 14px;
+        }
+
+        .input-group {
+            width: 100%;
+            margin-bottom: 20px;
+        }
+
+        .input-group label {
+            display: block;
+            margin-bottom: 6px;
+            font-size: 12px;
+            color: var(--vipps-text-gray);
+        }
+
+        .input-group input {
+            width: 100%;
+            padding: 14px;
+            background-color: var(--vipps-card-bg);
+            border: none;
+            border-radius: 10px;
+            color: var(--vipps-text-light);
+            font-size: 15px;
+            outline: none;
+        }
+
+        .btn-continue {
+            width: 100%;
+            padding: 16px;
+            background-color: var(--vipps-orange);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            margin-top: 15px;
+        }
+
+        /* Payment Screen */
+        .payment-screen {
+            display: none;
+            opacity: 0;
+            height: 100%;
+        }
+
+        .payment-screen.active {
+            display: flex;
+            flex-direction: column;
+            animation: fadeIn 0.3s forwards;
+        }
+
+        @keyframes fadeIn {
+            to { opacity: 1; }
+        }
+
         .header {
             display: flex;
             align-items: center;
-            padding: 15px 5vw 10px 5vw; /* Justert padding for topp-header */
+            padding: 15px 20px;
+            min-height: 60px;
         }
-        
+
         .back-arrow {
-            font-size: 24px;
+            font-size: 26px;
             cursor: pointer;
-            margin-right: 20px; /* Mer nøyaktig avstand */
-            font-weight: 500;
+            margin-right: 15px;
+            color: #8B7BFF;
         }
-        
+
         .header h2 {
             font-size: 18px;
             font-weight: 600;
             flex: 1;
             text-align: center;
-            margin-right: 40px; /* Kompenserer for pilen */
-        }
-        
-        /* --- Setup Screen --- */
-        
-        .setup-screen {
-            padding: 5vh 6vw;
-            /* ... (andre stiler beholdt) ... */
+            margin-right: 41px;
         }
 
-        .input-group input {
-            padding: 14px 12px; /* Finjustert padding */
-            background-color: var(--vipps-card-bg);
-            border-radius: 10px;
-        }
-        
-        /* --- Payment Screen (Kort oppsummert) --- */
-        
-        .payment-screen {
-            min-height: 100vh;
-            display: none;
-            opacity: 0;
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            background-color: var(--vipps-dark-bg);
-        }
-        
         .payment-content {
-            padding: 0 6vw 15vh 6vw; /* Mer plass til Betal-knapp */
-            /* ... (andre stiler beholdt) ... */
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 10px 25px;
+            flex: 1;
+            overflow-y: auto;
         }
-        
+
         .company-logo {
-            width: 80px;
-            height: 80px;
+            width: 70px;
+            height: 70px;
             border-radius: 50%;
-            background-color: #ffffff; 
-            margin-bottom: 20px;
-            box-shadow: 0 0 0 2px #fff;
-            overflow: hidden;
+            background: linear-gradient(135deg, #FFD700 0%, #FFA500 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 35px;
+            margin-bottom: 15px;
         }
-        
-        .company-logo img {
-            width: 100%;
-            height: 100%;
-            object-fit: contain;
-            /* Base64 for Os Håndball logo */
-            content: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAJgAAACGAQMAAAC/9yW4AAAABlBMVEVHcEz///+y2R5sAAAAAXRSTlMAQObYZgAAAFpJREFUKM9jYKAAM82hGEYEhhwYk8X+z2cI4cCYxWAwQhgyJ/H/72dIwQO3z9D/Zf+//y3O/3/b9//M8f/hDwYf/P9vPv7/FmEAAO4v3d/8c6NTAAAAAElFTkSuQmCC');
+
+        .company-name {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 4px;
         }
 
         .company-details {
-            font-size: 14px;
-            margin-bottom: 40px;
+            font-size: 13px;
+            color: var(--vipps-text-gray);
+            margin-bottom: 10px;
         }
-        
+
+        .gift-label {
+            font-size: 13px;
+            color: var(--vipps-text-gray);
+            margin-bottom: 25px;
+        }
+
         .amount-display {
-            font-size: 48px;
-            margin-bottom: 40px;
+            font-size: 50px;
+            font-weight: 700;
+            margin-bottom: 30px;
         }
 
         .fee-info {
             background-color: var(--vipps-fee-bg);
-            padding: 15px; /* Finjustert padding */
+            padding: 14px 18px;
             border-radius: 10px;
-            max-width: 350px;
-            font-size: 15px;
-            line-height: 1.3;
+            font-size: 14px;
+            text-align: center;
+            margin-bottom: 18px;
+            width: 100%;
+            line-height: 1.4;
         }
-        
+
+        .tax-card {
+            background-color: var(--vipps-card-bg);
+            padding: 14px 18px;
+            border-radius: 10px;
+            width: 100%;
+            margin-bottom: 18px;
+        }
+
+        .tax-card-header {
+            font-size: 15px;
+            margin-bottom: 8px;
+        }
+
+        .tax-card-link {
+            font-size: 13px;
+            color: var(--vipps-text-gray);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .tax-card-link span {
+            color: #8B7BFF;
+        }
+
         .bank-card {
             background-color: var(--vipps-card-bg);
-            padding: 15px; /* Finjustert padding */
-            border-radius: 10px;
-            max-width: 350px;
-            /* ... (andre stiler beholdt) ... */
+            padding: 14px 18px;
+            border-radius: 12px;
+            width: 100%;
+            display: flex;
+            align-items: center;
+            gap: 12px;
         }
-        
+
         .bank-logo {
             width: 60px;
-            height: 20px;
-            background-color: var(--nordea-red);
+            height: 24px;
+            background-color: var(--nordea-blue);
             border-radius: 4px;
-            margin-right: 15px;
-            /* Bruker background-image for å få tekst inni som i Vipps */
-            background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 60 20" fill="none"><rect width="60" height="20" rx="4" fill="%23CC0033"/><text x="30" y="14" font-family="-apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Helvetica, Arial, sans-serif" font-size="10" font-weight="bold" fill="white" text-anchor="middle">Nordea</text></svg>');
-            background-size: contain;
-            background-repeat: no-repeat;
-            background-position: center;
-            font-size: 0; /* Gjemmer placeholder-teksten */
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 700;
+            font-size: 10px;
+            flex-shrink: 0;
         }
-        
+
         .bank-number {
             font-size: 16px;
             font-weight: 600;
+            flex: 1;
         }
 
         .bank-label {
-            font-size: 10px;
-            line-height: 1.1;
-            /* Justerer for to linjer */
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: flex-end;
-            margin-right: 5px; 
+            font-size: 9px;
+            color: var(--vipps-text-gray);
+            text-align: right;
+            line-height: 1.2;
         }
 
         .arrow {
             font-size: 20px;
-            margin-left: 10px;
+            color: var(--vipps-text-gray);
         }
-        
+
         .pay-button-container {
-            padding: 20px 5vw; /* Justert padding */
+            padding: 15px 20px 20px 20px;
             background-color: var(--vipps-dark-bg);
-            border-top: none;
+            display: flex;
+            justify-content: center;
         }
-        
+
         .btn-pay {
-            padding: 16px;
-            border-radius: 14px;
+            width: 180px;
+            padding: 14px 0;
+            background-color: var(--vipps-orange);
+            color: white;
+            border: none;
+            border-radius: 50px;
+            font-size: 17px;
+            font-weight: 600;
+            cursor: pointer;
+            box-shadow: 0 4px 16px rgba(255, 92, 57, 0.4);
+            position: relative;
+            transition: all 0.3s;
         }
-        
-        /* --- Confirmation Screen (Kvittering) --- */
-        
+
+        .btn-pay.loading .btn-text {
+            opacity: 0;
+        }
+
+        .loading-spinner {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 24px;
+            height: 24px;
+            border: 3px solid rgba(255, 255, 255, 0.3);
+            border-top-color: white;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+            opacity: 0;
+        }
+
+        .btn-pay.loading .loading-spinner {
+            opacity: 1;
+        }
+
+        @keyframes spin {
+            to { transform: translate(-50%, -50%) rotate(360deg); }
+        }
+
+        /* Send Screen */
+        .send-screen {
+            display: none;
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: var(--vipps-dark-bg);
+            z-index: 50;
+            opacity: 0;
+        }
+
+        .send-screen.active {
+            display: block;
+            opacity: 1;
+        }
+
+        .send-content {
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+        }
+
+        .send-amount {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin: 120px 0 40px 0;
+            font-size: 60px;
+            font-weight: 700;
+        }
+
+        .amount-cursor {
+            width: 3px;
+            height: 70px;
+            background-color: var(--vipps-orange);
+            margin-left: 8px;
+            animation: blink 1s infinite;
+        }
+
+        @keyframes blink {
+            0%, 50% { opacity: 1; }
+            51%, 100% { opacity: 0; }
+        }
+
+        .message-section {
+            position: absolute;
+            bottom: 20px;
+            left: 0;
+            width: 100%;
+            padding: 0 20px;
+            display: flex;
+            gap: 10px;
+        }
+
+        .message-input {
+            flex: 1;
+            background-color: var(--vipps-card-bg);
+            border: none;
+            border-radius: 22px;
+            padding: 14px 18px;
+            color: var(--vipps-text-gray);
+            font-size: 15px;
+            outline: none;
+        }
+
+        .btn-next {
+            min-width: 90px;
+            background-color: #555;
+            color: var(--vipps-text-gray);
+            border: none;
+            border-radius: 22px;
+            padding: 14px 20px;
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .btn-next.active {
+            background-color: var(--vipps-orange);
+            color: white;
+        }
+
+        /* Confirmation Screen */
         .confirmation-screen {
+            display: none;
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
             background-color: var(--light-bg);
-            color: var(--text-dark);
-            /* ... (andre stiler beholdt) ... */
+            align-items: center;
+            justify-content: center;
+            z-index: 100;
+            opacity: 0;
         }
-        
+
+        .confirmation-screen.active {
+            display: flex;
+            animation: fadeIn 0.4s forwards;
+        }
+
+        .confetti-bg {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            transition: transform 0.05s ease-out;
+            perspective: 1000px;
+        }
+
+        .confetti {
+            position: absolute;
+            font-size: 45px;
+            opacity: 0.8;
+            transition: transform 0.05s ease-out;
+            will-change: transform;
+        }
+
         .receipt-card {
+            background-color: white;
             border-radius: 20px;
-            padding: 50px 30px; /* Justert padding for å matche bildet */
-            max-width: 300px;
-            width: auto;
+            padding: 50px 35px;
+            text-align: center;
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12);
+            position: relative;
+            z-index: 10;
+            width: 300px;
         }
-        
+
         .receipt-header {
-            margin-bottom: 20px;
-        }
-        
-        .vipps-icon {
-            background-color: var(--vipps-purple);
-            width: 30px;
-            height: 30px;
-            border-radius: 8px;
-            margin-right: 10px;
             display: flex;
             align-items: center;
             justify-content: center;
+            margin-bottom: 20px;
         }
-        
-        .vipps-icon span {
-            /* Base64 for Vipps logo V-ikon */
-            content: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="white"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/></svg>');
-            width: 18px;
-            height: 18px;
-            font-size: 0;
+
+        .vipps-icon {
+            width: 35px;
+            height: 35px;
+            background-color: var(--vipps-orange);
+            border-radius: 8px;
+            margin-right: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 700;
+            font-size: 18px;
+        }
+
+        .receipt-business {
+            text-align: left;
         }
 
         .receipt-business-name {
-            font-size: 14px;
+            font-size: 15px;
             font-weight: 600;
-            line-height: 1.2;
+            color: var(--text-dark);
         }
-        
+
         .receipt-business-id {
-            font-size: 12px;
+            font-size: 11px;
             color: #888;
         }
-        
+
         .receipt-amount {
-            font-size: 40px;
-            margin: 15px 0 5px 0;
+            font-size: 46px;
+            font-weight: 700;
+            color: var(--text-dark);
+            margin: 18px 0;
         }
-        
+
         .receipt-description {
-            font-size: 16px;
-            color: #5a5a5a;
+            font-size: 15px;
+            color: #666;
         }
-        
+
+        .hidden {
+            display: none !important;
+        }
     </style>
 </head>
 <body>
     <div class="app-container">
+        <!-- Setup Screen -->
         <div class="setup-screen" id="setupScreen">
             <h1>⚙️ Vipps Simulator</h1>
             <p>Fyll inn informasjon for betalingen</p>
+
             <div class="input-group">
                 <label>Bedriftsnavn</label>
-                <input type="text" id="businessName" placeholder="F.eks. Nordic Kitchen" value="Nordic Kitchen">
+                <input type="text" id="businessName" value="Nordic Kitchen">
             </div>
+
             <div class="input-group">
                 <label>Bedrifts-ID</label>
-                <input type="text" id="businessId" placeholder="F.eks. #986362" value="#986362">
+                <input type="text" id="businessId" value="#986362">
             </div>
+
             <div class="input-group">
                 <label>Bedrifts organisasjonsnavn</label>
-                <input type="text" id="orgName" placeholder="F.eks. NORDIC KITCHEN AS" value="NORDIC KITCHEN AS">
+                <input type="text" id="orgName" value="NORDIC KITCHEN AS">
             </div>
+
             <div class="input-group">
                 <label>Beløp (kr)</label>
-                <input type="number" id="amount" placeholder="F.eks. 100000" value="100000">
+                <input type="number" id="amount" value="100000">
             </div>
+
             <div class="input-group">
                 <label>Beskrivelse</label>
-                <input type="text" id="description" placeholder="F.eks. Komplett kjøkken" value="Komplett kjøkken">
+                <input type="text" id="description" value="Komplett kjøkken">
             </div>
+
             <button class="btn-continue" onclick="startPayment()">Start betaling</button>
         </div>
-        
+
+        <!-- Payment Screen -->
         <div class="payment-screen" id="paymentScreen">
             <div class="header">
                 <span class="back-arrow" onclick="goBack()">←</span>
                 <h2>Kort oppsummert</h2>
             </div>
+
             <div class="payment-content">
-                <div class="company-logo" id="paymentLogo">
-                    <img alt="Os Håndball logo">
-                </div>
+                <div class="company-logo">🏢</div>
                 <div class="company-name" id="paymentBusinessName"></div>
                 <div class="company-details" id="paymentDetails"></div>
+                <div class="gift-label">🏷️ Gåve til Ungdomstunet</div>
                 <div class="amount-display" id="paymentAmount"></div>
+
                 <div class="fee-info">
                     Vipps tar ingen gebyr når du betaler til en bedrift. Uansett beløp 🙌
                 </div>
+
+                <div class="tax-card">
+                    <div class="tax-card-header">Vil du ha skattefradrag?</div>
+                    <div class="tax-card-link">
+                        <span style="color: var(--vipps-text-gray);">Gi tilgang til navn og fødselsnummer</span>
+                        <span>Gi tilgang</span>
+                    </div>
+                </div>
+
                 <div class="bank-card">
                     <div class="bank-logo">Nordea</div>
                     <div class="bank-number">6011.17.67591</div>
@@ -310,18 +567,50 @@
                     <div class="arrow">›</div>
                 </div>
             </div>
+
             <div class="pay-button-container">
-                <button class="btn-pay" onclick="confirmPayment()">Betal</button>
+                <button class="btn-pay" id="payButtonStart">
+                    <span class="btn-text">Betal</span>
+                    <div class="loading-spinner"></div>
+                </button>
             </div>
         </div>
-        
+
+        <!-- Send Screen -->
+        <div class="send-screen" id="sendScreen">
+            <div class="send-content">
+                <div class="header">
+                    <span class="back-arrow" onclick="goBackFromSend()">←</span>
+                    <h2>Send til</h2>
+                </div>
+
+                <div style="text-align: center; padding: 0 25px;">
+                    <div class="company-logo">🏢</div>
+                    <div class="company-name" id="sendBusinessName"></div>
+                    <div class="company-details" id="sendDetails"></div>
+                    <div class="gift-label">🏷️ Gåve til Ungdomstunet</div>
+                </div>
+
+                <div class="send-amount">
+                    <span id="sendAmountDisplay">0</span>
+                    <span style="margin-left: 5px;">kr</span>
+                    <div class="amount-cursor"></div>
+                </div>
+            </div>
+
+            <div class="message-section">
+                <input type="text" class="message-input" placeholder="Skriv en liten melding">
+                <button class="btn-next" id="nextBtn">Neste</button>
+            </div>
+        </div>
+
+        <!-- Confirmation Screen -->
         <div class="confirmation-screen" id="confirmationScreen">
             <div class="confetti-bg" id="confettiBg"></div>
-                        <div class="receipt-card">
+            
+            <div class="receipt-card">
                 <div class="receipt-header">
-                    <div class="vipps-icon">
-                        <span>V</span>
-                    </div>
+                    <div class="vipps-icon">V</div>
                     <div class="receipt-business">
                         <div class="receipt-business-name" id="receiptBusinessName"></div>
                         <div class="receipt-business-id" id="receiptBusinessId"></div>
@@ -332,98 +621,136 @@
             </div>
         </div>
     </div>
+
     <script>
         let paymentData = {};
-        
+        let currentAmount = '';
+
         function startPayment() {
-            // Henter data fra setup screen
-            const businessName = document.getElementById('businessName').value || 'Nordic Kitchen';
-            const businessId = document.getElementById('businessId').value || '#986362';
-            const orgName = document.getElementById('orgName').value || 'NORDIC KITCHEN AS';
-            const amount = document.getElementById('amount').value || '100000';
-            const description = document.getElementById('description').value || 'Komplett kjøkken';
-            paymentData = { businessName: 'Os Håndball', businessId: '#88688', orgName: 'OS TURNFORENING', amount: '30', description: description };
+            const businessName = document.getElementById('businessName').value;
+            const businessId = document.getElementById('businessId').value;
+            const orgName = document.getElementById('orgName').value;
+            const amount = document.getElementById('amount').value;
+            const description = document.getElementById('description').value;
+
+            paymentData = { businessName, businessId, orgName, amount, description };
+
+            // Go directly to Send screen first
+            document.getElementById('sendBusinessName').textContent = businessName;
+            document.getElementById('sendDetails').textContent = `${businessId} • ${orgName}`;
             
-            // Oppdaterer betalingsskjermen (Os Håndball stil)
-            document.getElementById('paymentBusinessName').textContent = 'Os Håndball';
-            document.getElementById('paymentDetails').textContent = `#88688 • OS TURNFORENING`;
-            document.getElementById('paymentAmount').textContent = formatAmount('30') + ' kr';
-            
-            // Viser betalingsskjermen
             document.getElementById('setupScreen').classList.add('hidden');
+            document.getElementById('sendScreen').classList.add('active');
+            
+            setTimeout(() => updateAmount(amount), 500);
+        }
+
+        function updateAmount(value) {
+            currentAmount = value;
+            document.getElementById('sendAmountDisplay').textContent = formatAmount(value);
+            document.getElementById('nextBtn').classList.add('active');
+        }
+
+        document.getElementById('nextBtn').addEventListener('click', function() {
+            if (!this.classList.contains('active')) return;
+            
+            // Go to payment screen
+            document.getElementById('paymentBusinessName').textContent = paymentData.businessName;
+            document.getElementById('paymentDetails').textContent = `${paymentData.businessId} • ${paymentData.orgName}`;
+            document.getElementById('paymentAmount').textContent = formatAmount(currentAmount) + ' kr';
+            
+            document.getElementById('sendScreen').classList.remove('active');
             document.getElementById('paymentScreen').classList.add('active');
+        });
+
+        document.getElementById('payButtonStart').addEventListener('click', function() {
+            const btn = this;
+            btn.classList.add('loading');
             
-            // Skifter bakgrunn til mørk (sikkerhet)
-            document.querySelector('.app-container').style.backgroundColor = 'var(--vipps-dark-bg)';
-            document.body.style.backgroundColor = 'var(--vipps-dark-bg)';
-        }
-        
-        function confirmPayment() {
-            // Oppdaterer kvitteringsskjermen (Nordic Kitchen stil)
-            const finalBusinessName = document.getElementById('businessName').value || 'Nordic Kitchen';
-            const finalBusinessId = document.getElementById('businessId').value || '#986362';
-            const finalOrgName = document.getElementById('orgName').value || 'NORDIC KITCHEN AS';
-            const finalAmount = document.getElementById('amount').value || '100000';
-            const finalDescription = document.getElementById('description').value || 'Komplett kjøkken';
-            
-            document.getElementById('receiptBusinessName').textContent = finalBusinessName;
-            document.getElementById('receiptBusinessId').textContent = `${finalBusinessId} • ${finalOrgName}`;
-            document.getElementById('receiptAmount').textContent = formatAmount(finalAmount) + ' kr';
-            document.getElementById('receiptDescription').textContent = finalDescription;
-            
-            // Viser bekreftelsesskjermen
-            createConfetti();
-            document.getElementById('confirmationScreen').classList.add('active');
-            
-            // Skifter bakgrunn til lys
-            document.querySelector('.app-container').style.backgroundColor = 'var(--light-bg)';
-            document.body.style.backgroundColor = 'var(--light-bg)';
-            
-            // Legger til 3D parallax effekt
-            if (window.DeviceOrientationEvent) {
-                window.addEventListener('deviceorientation', handleOrientation);
-            }
-        }
-        
-        function handleOrientation(event) {
-            const confettiBg = document.getElementById('confettiBg');
-            const beta = event.beta || 0;
-            const gamma = event.gamma || 0; 
-            
-            const x = (gamma / 90) * 20;
-            const y = (beta / 180) * 20;
-            
-            confettiBg.style.transform = `translate(${x}px, ${y}px)`;
-        }
-        
+            setTimeout(() => {
+                // Go to confirmation screen
+                document.getElementById('receiptBusinessName').textContent = paymentData.businessName;
+                document.getElementById('receiptBusinessId').textContent = `${paymentData.businessId} • ${paymentData.orgName}`;
+                document.getElementById('receiptAmount').textContent = formatAmount(currentAmount) + ' kr';
+                document.getElementById('receiptDescription').textContent = paymentData.description;
+
+                createConfetti();
+
+                document.getElementById('paymentScreen').classList.remove('active');
+                document.getElementById('confirmationScreen').classList.add('active');
+                
+                btn.classList.remove('loading');
+
+                if (window.DeviceOrientationEvent) {
+                    window.addEventListener('deviceorientation', handleOrientation);
+                }
+            }, 1500);
+        });
+
         function goBack() {
             document.getElementById('paymentScreen').classList.remove('active');
-            document.getElementById('setupScreen').classList.remove('hidden');
-            // Gå tilbake til mørk bakgrunn
-            document.querySelector('.app-container').style.backgroundColor = 'var(--vipps-dark-bg)';
-            document.body.style.backgroundColor = 'var(--vipps-dark-bg)';
+            document.getElementById('sendScreen').classList.add('active');
         }
-        
+
+        function goBackFromSend() {
+            document.getElementById('sendScreen').classList.remove('active');
+            document.getElementById('setupScreen').classList.remove('hidden');
+        }
+
+        function handleOrientation(event) {
+            const confettiBg = document.getElementById('confettiBg');
+            const confettiElements = confettiBg.querySelectorAll('.confetti');
+            
+            const beta = event.beta || 0;   // X-axis tilt (-180 to 180)
+            const gamma = event.gamma || 0; // Y-axis tilt (-90 to 90)
+            
+            // Calculate movement - more responsive
+            const moveX = (gamma / 90) * 25;  // Max 25px movement
+            const moveY = (beta / 180) * 25;  // Max 25px movement
+            
+            // Move each confetti individually with parallax effect
+            confettiElements.forEach((confetti, index) => {
+                // Different depths for different confetti
+                const depth = 0.5 + (index % 3) * 0.25; // 0.5, 0.75, 1.0
+                const translateX = moveX * depth;
+                const translateY = moveY * depth;
+                
+                confetti.style.transform = `rotate(90deg) translate(${translateX}px, ${translateY}px)`;
+            });
+        }
+
         function formatAmount(amount) {
-            // Sikrer at 100000 blir 100 000
             return parseInt(amount).toLocaleString('no-NO');
         }
-        
+
         function createConfetti() {
             const container = document.getElementById('confettiBg');
             container.innerHTML = '';
-            // Bruker emoji for å simulere konfetti
-            const emojis = ['🎉', '🎊', '✨', '⭐', '🌟']; 
             
-            for (let i = 0; i < 25; i++) {
-                const confetti = document.createElement('div');
-                confetti.className = 'confetti';
-                confetti.textContent = emojis[Math.floor(Math.random() * emojis.length)];
-                confetti.style.left = Math.random() * 100 + '%';
-                confetti.style.top = Math.random() * 100 + '%';
-                // Legger til liten random rotasjon
-                confetti.style.transform = `rotate(${Math.random() * 360}deg)`; 
-                container.appendChild(confetti);
+            const rows = 5;
+            const cols = 4;
+            
+            for (let row = 0; row < rows; row++) {
+                for (let col = 0; col < cols; col++) {
+                    const confetti = document.createElement('div');
+                    confetti.className = 'confetti';
+                    confetti.textContent = '🎉';
+                    
+                    const x = (col / (cols - 1)) * 100;
+                    const y = (row / (rows - 1)) * 100;
+                    
+                    confetti.style.left = x + '%';
+                    confetti.style.top = y + '%';
+                    confetti.style.transform = 'rotate(90deg)';
+                    
+                    // Add blur for depth effect
+                    const blurAmount = (row + col) % 3 === 0 ? 1 : 0;
+                    if (blurAmount > 0) {
+                        confetti.style.filter = `blur(${blurAmount}px)`;
+                    }
+                    
+                    container.appendChild(confetti);
+                }
             }
         }
     </script>
